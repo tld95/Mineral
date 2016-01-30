@@ -31,7 +31,15 @@ Pebble.addEventListener('appmessage',
         var json = JSON.parse(responseText);
 	var ans = json.answer;
 	console.log(ans);
-	var dict = {'ANSWER': ans};
+	var dict = {2: ans};
+	  Pebble.sendAppMessage(dictionary,
+          function(e) {
+            console.log('Sent back successfully');
+          },
+          function(e) {
+            console.log('Failed');
+          }
+        )
 	});
   
   }                     
