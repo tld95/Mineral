@@ -7,7 +7,6 @@ static int16_t enable_search = 0;
 static void tap_handler(AccelAxisType axis, int32_t direction) {
   if (axis == ACCEL_AXIS_Y){
 	enable_search = 1;	
-	//vibes_short_pulse();
   }
 }
 
