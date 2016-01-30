@@ -1,7 +1,5 @@
 #include <pebble_worker.h>
 
-#define ENABLESEARCH 0
-
 static void tap_handler(AccelAxisType axis, int32_t direction) {
   if (axis == ACCEL_AXIS_Y){
 	 worker_launch_app();

@@ -1,9 +1,26 @@
 #include <pebble.h>
 
 static DictationSession *s_dictation_session;
+static DictionaryIterator *iterator;
 static char s_last_text[512];
 static Window *window;
 static TextLayer *text_layer;
+
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+
+}
+
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+}
+
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+}
+
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
 
 static void dictation_session_callback(DictationSession *session, DictationSessionStatus status,
 	char *transcription, void  *context) {
@@ -11,6 +28,12 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 	if (status == DictationSessionStatusSuccess) {
 		snprintf(s_last_text, sizeof(s_last_text), "%s", transcription);
 		text_layer_set_text(text_layer, s_last_text);
+		uint32_t key = 1;
+
+		app_message_outbox_begin(&iterator);
+		dict_write_cstring(iterator, key, s_last_text);
+		app_message_outbox_send();
+
 	} else {
 		text_layer_set_text(text_layer, "Error Transcribing\n");
 	}	
@@ -41,8 +64,17 @@ static void init(void) {
   NULL);
 
   window_stack_push(window, animated);
-	vibes_short_pulse();
-	dictation_session_start(s_dictation_session);
+
+	// Register callbacks
+	app_message_register_inbox_received(inbox_received_callback);
+	app_message_register_inbox_dropped(inbox_dropped_callback);
+	app_message_register_outbox_failed(outbox_failed_callback);
+	app_message_register_outbox_sent(outbox_sent_callback);
+
+	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+	
+  vibes_short_pulse();
+  dictation_session_start(s_dictation_session);
 }
 
 static void deinit(void) {
