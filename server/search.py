@@ -38,7 +38,14 @@ def search(query):
                 try:
                     results.append(driver.find_element_by_id("cwos").text)
                 except:
-                    results.append("No result")
+                    try:
+                        x = driver.find_element_by_css_selector('#_Cif input')
+                        results.append(x.get_attribute('value'));
+                    except:
+                        try:
+                            results.append(driver.find_element_by_id('tw-target').text)
+                        except:
+                            results.append("No result")
     ans = results[0];
     for i in range(1,len(results)):
         if len(results[i]) > 0:
