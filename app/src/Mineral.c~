@@ -1,13 +1,18 @@
 #include <pebble.h>
 
 static DictationSession *s_dictation_session;
-static DictionaryIterator *iterator;
+static DictionaryIterator *itr;
 static char s_last_text[512];
+static uint8_t buffer[10];
 static Window *window;
 static TextLayer *text_layer;
 
-static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
 
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+	Tuple *result = dict_read_first(iterator);
+	char *s = result->value->cstring;
+	snprintf(s_last_text, sizeof(s_last_text), "%s", s);
+	
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -30,8 +35,8 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 		text_layer_set_text(text_layer, s_last_text);
 		uint32_t key = 1;
 
-		app_message_outbox_begin(&iterator);
-		dict_write_cstring(iterator, key, s_last_text);
+		app_message_outbox_begin(&itr);
+		dict_write_cstring(itr, key, s_last_text);
 		app_message_outbox_send();
 
 	} else {
@@ -71,7 +76,7 @@ static void init(void) {
 	app_message_register_outbox_failed(outbox_failed_callback);
 	app_message_register_outbox_sent(outbox_sent_callback);
 
-	app_message_open(10,10);
+	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 	
   vibes_short_pulse();
   dictation_session_start(s_dictation_session);
