@@ -1,10 +1,26 @@
 #include <pebble.h>
 
+//59f3
+
 static DictationSession *s_dictation_session;
+static char s_last_text[512];
 static Window *window;
 static TextLayer *text_layer;
 
-static void click_config_provider(void *context) {
+static void dictation_session_callback(DictationSession *session, DictationSessionStatus status,
+	char *transcription, void  *context) {
+	
+	if (status == DictationSessionStatusSuccess) {
+		snprintf(s_last_text, sizeof(s_last_text), "%s", transcription);
+		text_layer_set_text(text_layer, s_last_text);
+	} else {
+		text_layer_set_text(text_layer, "Error transcribing\n");
+	}	
+}
+
+static void worker_message_handler(uint16_t type, AppWorkerMessage *data) {
+	// Put condition for starting to listen here
+	dictation_session_start(s_dictation_session);
 }
 
 static void window_load(Window *window) {
@@ -23,16 +39,23 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
   });
   const bool animated = true;
+
+	s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback,
+	 NULL);
+
   window_stack_push(window, animated);
+
+	// Subscribes to background worker
+	app_worker_message_subscribe(worker_message_handler);
 }
 
 static void deinit(void) {
+	dictation_session_destroy(s_dictation_session);
   window_destroy(window);
 }
 
