@@ -1,23 +1,9 @@
 #include <pebble_worker.h>
 
-#define ENABLESEARCH 0
-
-static int16_t enable_search = 0;
-
 static void tap_handler(AccelAxisType axis, int32_t direction) {
   if (axis == ACCEL_AXIS_Y){
-	enable_search = 1;	
+	 worker_launch_app();
   }
-}
-
-static void send_to_foreground() {
-  // Construct a data packet
-  AppWorkerMessage msg_data = {
-    .data0 = enable_search
-  };
-
-  app_worker_send_message(ENABLESEARCH, &msg_data);
-  enable_search = 0;
 }
 
 static void worker_init() {

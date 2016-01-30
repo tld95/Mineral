@@ -1,17 +1,23 @@
 #include <pebble_worker.h>
 
-//static DictationSession *s_dictation_session;
+#define ENABLESEARCH 0
 
-static void init() {
-
+static void tap_handler(AccelAxisType axis, int32_t direction) {
+  if (axis == ACCEL_AXIS_Y){
+	 worker_launch_app();
+  }
 }
 
-static void deinit() {
+static void worker_init() {
+  accel_tap_service_subscribe(tap_handler);
+}
 
+static void worker_deinit() {
+  accel_tap_service_unsubscribe();
 }
 
 int main(void) {
-	init();	
-	worker_event_loop();
-	deinit();
+  worker_init();
+  worker_event_loop();
+  worker_deinit();
 }

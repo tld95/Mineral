@@ -1,7 +1,5 @@
 #include <pebble.h>
 
-//59f3
-
 static DictationSession *s_dictation_session;
 static char s_last_text[512];
 static Window *window;
@@ -14,13 +12,8 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 		snprintf(s_last_text, sizeof(s_last_text), "%s", transcription);
 		text_layer_set_text(text_layer, s_last_text);
 	} else {
-		text_layer_set_text(text_layer, "Error transcribing\n");
+		text_layer_set_text(text_layer, "Error Transcribing\n");
 	}	
-}
-
-static void worker_message_handler(uint16_t type, AppWorkerMessage *data) {
-	// Put condition for starting to listen here
-	dictation_session_start(s_dictation_session);
 }
 
 static void window_load(Window *window) {
@@ -28,7 +21,6 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Search");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
@@ -45,13 +37,12 @@ static void init(void) {
   });
   const bool animated = true;
 
-	s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback,
-	 NULL);
+  s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback,
+  NULL);
 
   window_stack_push(window, animated);
-
-	// Subscribes to background worker
-	app_worker_message_subscribe(worker_message_handler);
+	vibes_short_pulse();
+	dictation_session_start(s_dictation_session);
 }
 
 static void deinit(void) {
