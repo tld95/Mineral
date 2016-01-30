@@ -1,0 +1,17 @@
+#include <pebble_worker.h>
+
+//static DictationSession *s_dictation_session;
+
+static void init() {
+
+}
+
+static void deinit() {
+
+}
+
+int main(void) {
+	init();	
+	worker_event_loop();
+	deinit();
+}
