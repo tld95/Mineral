@@ -32,7 +32,7 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 	
 	if (status == DictationSessionStatusSuccess) {
 		snprintf(s_last_text, sizeof(s_last_text), "%s", transcription);
-		text_layer_set_text(text_layer, s_last_text);
+		text_layer_set_text(text_layer, "Loading...");
 		uint32_t key = 1;
 
 		app_message_outbox_begin(&itr);
