@@ -4,7 +4,7 @@ var xhrRequest = function (url, type, callback) {
 	if (xhr.readyState==4 && xhr.status==200) {
  	  callback(this.responseText);
 	} else {
-	  console.log(xhr.readyState);	
+	  console.log(xhr.readyState + " " + xhr.status);	
 	}
   };
   xhr.open(type, url);
@@ -31,7 +31,15 @@ Pebble.addEventListener('appmessage',
         var json = JSON.parse(responseText);
 	var ans = json.answer;
 	console.log(ans);
-	var dict = {'ANSWER': ans};
+	var dict = {2: ans};
+	  Pebble.sendAppMessage(dictionary,
+          function(e) {
+            console.log('Sent back successfully');
+          },
+          function(e) {
+            console.log('Failed');
+          }
+        )
 	});
   
   }                     
