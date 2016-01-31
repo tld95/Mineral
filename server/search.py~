@@ -58,9 +58,17 @@ def search(query):
 									except:
 										try:
 											results.append(driver.find_element_by_class_name
-('kno-rdesc').text)
+('vk_ans').text)
 										except:
-											results.append("No result")
+											try:
+												results.append(driver.find_element_by_class_name
+('kno-rdesc').text)
+											except:
+												try:
+													results.append(driver.find_element_by_class_name
+('answer_predicate').text)
+												except:
+													results.append("No result")
 									
 								
 

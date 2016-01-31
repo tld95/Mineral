@@ -15,9 +15,13 @@ print "Ready!"
 @app.route("/api", methods=['GET','POST'])
 def hello():
     query = request.args.get('q')
-    print "searching " + query
-    answer = search.search(query)
-    print answer["answer"]
+
+    if query == "What is mineral" :
+		answer = { "answer": "Mineral is a personal assistant for the Pebble, which scrapes Google Search and returns insightful textual information to the user, based on a query.", "searchResults":[]}
+    else :
+    	print "searching " + query
+    	answer = search.search(query)
+    	print answer["answer"]
     resp = flask.Response(json.dumps(answer))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     resp.headers['Content-Type'] = 'application/json'
