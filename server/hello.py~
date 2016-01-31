@@ -17,7 +17,7 @@ def hello():
     query = request.args.get('q')
     print "searching " + query
     answer = search.search(query)
-    print answer["answer"]
+	print answer["answer"]
     resp = flask.Response(json.dumps(answer))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     resp.headers['Content-Type'] = 'application/json'

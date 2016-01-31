@@ -43,7 +43,7 @@ def search(query):
                         results.append(x.get_attribute('value'));
                     except:
                         try:
-                            results.append(driver.find_element_by_css_selector('#tw-target .tw-data-text').text)
+                            results.append(driver.find_element_by_css_selector('#tw-target').text)
                         except:
                             results.append("No result")
     ans = results[0];
