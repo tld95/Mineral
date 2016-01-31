@@ -22,7 +22,7 @@ Pebble.addEventListener('appmessage',
     console.log('AppMessage received!');
     var query = e.payload["1"];
     var q2 = encodeURI(query);
-    //var url = 'http://192.241.169.235:5000/api?q=' + q2;
+    //var url = 'http://192.168.43.160:5000/api?q=' + q2;
 
 	var url = 'http://192.168.43.160:5000/api?q=' + q2
 	console.log(url);
@@ -30,8 +30,17 @@ Pebble.addEventListener('appmessage',
       function(responseText) {
         var json = JSON.parse(responseText);
 	var ans = json.answer;
+	var arr = json.searchResults;
+	var titles = "";
+	var urls = "";
+	for(var i = 0; i < arr.length; i++) {
+	  titles = titles + arr[i].title + "\t";
+	  urls = urls + arr[i].url + "\t";
+	}
 	console.log(ans);
-	var dict = {2: ans};
+	console.log(titles);
+	console.log(urls);
+	var dict = {2: ans, 3:titles, 4:urls};
 	  Pebble.sendAppMessage(dict,
           function(e) {
             console.log('Sent back successfully');
