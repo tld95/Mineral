@@ -9,7 +9,7 @@ static TextLayer *text_layer;
 
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-	Tuple *result = dict_read_first(iterator);
+	Tuple *result = dict_find(iterator,2);
 	char *value = result->value->cstring;
 	snprintf(s_last_text, sizeof(s_last_text), "%s", value);
 	text_layer_set_text(text_layer, s_last_text);	
