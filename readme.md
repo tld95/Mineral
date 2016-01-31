@@ -22,11 +22,11 @@
   - User Interface
 
 ## Future Ideas
-[] Twitter intergration; Allowing the user to tweet by speaking to Mineral.
-[] Displaying weather information.
-[] Displaying images from Google Images.
-[] Intergration with internet of things.
-[] Integration with Houndify api, rather than scraping Google
+- [ ] Twitter intergration; Allowing the user to tweet by speaking to Mineral.
+- [ ] Displaying weather information.
+- [ ] Displaying images from Google Images.
+- [ ] Intergration with internet of things.
+- [ ] Integration with Houndify api, rather than scraping Google
 
 ## Contribute
 
