@@ -13,7 +13,7 @@
 1. Simply flick your wrist while wearing the Pebble smartwatch to activate the dictation software.
 2. When the microphone icon appears on the screen, speak your query to the watch.
 3. Once your voice has been processed by Mineral, click the center button of the Pebble to confirm your query.
-4. The watch will then display ananswer to your query.
+4. The watch will then display an answer to your query.
 
 ## APIs Used
 - [Pebble C API](https://developer.getpebble.com/docs/c/)
