@@ -45,7 +45,15 @@ def search(query):
                         try:
                             results.append(driver.find_element_by_id('tw-target').text)
                         except:
-                            results.append("No result")
+                            try:
+                                results.append(driver.find_element_by_class_name('_fbh').text)
+                            except:
+                                try:
+                                    x = driver.find_element_by_css_selector('.mod ._oDd')
+                                    results.append(x.get_attribute('value'));
+                                except:
+                                    results.append("No result")
+
     ans = results[0];
     for i in range(1,len(results)):
         if len(results[i]) > 0:
@@ -64,6 +72,3 @@ def search(query):
         search_results = [{"title":"No results found"}]
     response['searchResults'] = search_results
     return response
-
-
-
