@@ -2,7 +2,7 @@
 # MINERAL
 > Pebble's first personal assistant!
 
-[Mineral](https://www.youtube.com/watch?v=cwL0inVQiSM)
+[![MINERAL](http://img.youtube.com/vi/cwL0inVQiSM/0.jpg)](https://youtu.be/cwL0inVQiSM)
 
 ## What is it?
 - Mineral is a personal assistant for the Pebble, which scrapes Google Search and returns insightful textual information to the user, based on a query.
