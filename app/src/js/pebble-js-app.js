@@ -24,7 +24,7 @@ Pebble.addEventListener('appmessage',
     var q2 = encodeURI(query);
     //var url = 'http://192.241.169.235:5000/api?q=' + q2;
 
-	var url = 'http://192.241.169.235:5000/api?q=' + q2
+	var url = 'http://192.168.43.160:5000/api?q=' + q2
 	console.log(url);
     xhrRequest(url, 'GET',
       function(responseText) {

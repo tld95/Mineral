@@ -2,17 +2,24 @@
 
 static DictationSession *s_dictation_session;
 static DictionaryIterator *itr;
-static char s_last_text[512];
-static uint8_t buffer[10];
+static char main_search_value[512];
 static Window *window;
 static TextLayer *text_layer;
+static ScrollLayer *scroll_layer;
+static int index;
 
+static void click_config_provider(void *context) {
+
+}
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-	Tuple *result = dict_read_first(iterator);
-	char *value = result->value->cstring;
-	snprintf(s_last_text, sizeof(s_last_text), "%s", value);
-	text_layer_set_text(text_layer, s_last_text);	
+	// Main search result value
+	Tuple *result_one = dict_find(iterator, 2);
+	char *value = result_one->value->cstring;
+	snprintf(main_search_value, sizeof(main_search_value), "%s", value);
+
+	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+	text_layer_set_text(text_layer, main_search_value);	
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -27,16 +34,15 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
-static void dictation_session_callback(DictationSession *session, DictationSessionStatus status,
-	char *transcription, void  *context) {
+static void dictation_session_callback(DictationSession *session, DictationSessionStatus status, char *transcription, void  *context) {
 	
 	if (status == DictationSessionStatusSuccess) {
-		snprintf(s_last_text, sizeof(s_last_text), "%s", transcription);
+		snprintf(main_search_value, sizeof(main_search_value), "%s", transcription);
 		text_layer_set_text(text_layer, "Loading...");
 		uint32_t key = 1;
 
 		app_message_outbox_begin(&itr);
-		dict_write_cstring(itr, key, s_last_text);
+		dict_write_cstring(itr, key, main_search_value);
 		app_message_outbox_send();
 
 	} else {
@@ -48,35 +54,48 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 
+	bounds.size.h } });
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+	text_layer_set_overflow_mode(text_layer, GTextOverflowModeWordWrap);
+/*
+	scroll_layer = scroll_layer_create(bounds);
+	scroll_layer_set_click_config_onto_window(scroll_layer, window);
+	scroll_layer_set_content_size(scroll_layer, GSize(bounds.size.w, bounds.size.h));
+	scroll_layer_add_child(scroll_layer, text_layer_get_layer(text_layer));
+	layer_add_child(window_layer, scroll_layer_get_layer(scroll_layer));
+*/
 }
 
 static void window_unload(Window *window) {
   text_layer_destroy(text_layer);
+	scroll_layer_destroy(scroll_layer);
 }
+
 
 static void init(void) {
   window = window_create();
+  window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
   });
   const bool animated = true;
 
-  s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback,
-  NULL);
+  s_dictation_session = dictation_session_create(sizeof(main_search_value), 
+  dictation_session_callback, NULL);
 
   window_stack_push(window, animated);
 
-	// Register callbacks
-	app_message_register_inbox_received(inbox_received_callback);
-	app_message_register_inbox_dropped(inbox_dropped_callback);
-	app_message_register_outbox_failed(outbox_failed_callback);
-	app_message_register_outbox_sent(outbox_sent_callback);
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);   
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
 
-	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 	
   vibes_short_pulse();
   dictation_session_start(s_dictation_session);
