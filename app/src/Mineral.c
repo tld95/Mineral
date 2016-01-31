@@ -8,13 +8,7 @@ static TextLayer *text_layer;
 static ScrollLayer *scroll_layer;
 static int index;
 
-/*
-static void click_config_provider(void *context) {
-
-}
-*/
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-	// Main search result value
 	Tuple *result_one = dict_find(iterator, 2);
 	char *value = result_one->value->cstring;
 	snprintf(main_search_value, sizeof(main_search_value), "%s", value);
@@ -66,14 +60,11 @@ static void window_load(Window *window) {
 	text_layer_set_background_color(text_layer, GColorBlue);
 	text_layer_set_text_color(text_layer, GColorWhite);	
 
-	// Add the TextLayer and ScrollLayer to the view heirachy
 	scroll_layer_add_child(scroll_layer, text_layer_get_layer(text_layer));
 	layer_add_child(window_layer, scroll_layer_get_layer(scroll_layer));
 
-	// Enable TextLayer text flow and paging with inset size 2px
 	text_layer_enable_screen_text_flow_and_paging(text_layer, 2);
 
-	// Enable ScrollLayer paging
 	scroll_layer_set_paging(scroll_layer, true);
 
 	scroll_layer_add_child(scroll_layer, text_layer_get_layer(text_layer));
@@ -90,7 +81,6 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   window = window_create();
- // window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
@@ -102,7 +92,6 @@ static void init(void) {
 
   window_stack_push(window, animated);
 
-  // Register callbacks
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);   
   app_message_register_outbox_failed(outbox_failed_callback);
