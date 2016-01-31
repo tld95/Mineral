@@ -54,10 +54,12 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  bitmap_layer_destroy(bitmap_layer);
   APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  bitmap_layer_destroy(bitmap_layer);
   APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
