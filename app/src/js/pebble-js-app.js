@@ -40,7 +40,7 @@ Pebble.addEventListener('appmessage',
 	console.log(ans);
 	console.log(titles);
 	console.log(urls);
-	var dict = {2: ans, 3:titles, 4:urls};
+	var dict = {2: ans};
 	  Pebble.sendAppMessage(dict,
           function(e) {
             console.log('Sent back successfully');
