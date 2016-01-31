@@ -8,18 +8,20 @@ static TextLayer *text_layer;
 static ScrollLayer *scroll_layer;
 static int index;
 
+/*
 static void click_config_provider(void *context) {
 
 }
-
+*/
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
 	// Main search result value
 	Tuple *result_one = dict_find(iterator, 2);
 	char *value = result_one->value->cstring;
 	snprintf(main_search_value, sizeof(main_search_value), "%s", value);
 
-	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-	text_layer_set_text(text_layer, main_search_value);	
+	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+	text_layer_set_text(text_layer, main_search_value); 
+	scroll_layer_set_content_size(scroll_layer, text_layer_get_content_size(text_layer));
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -54,19 +56,30 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 
-	bounds.size.h } });
+	scroll_layer = scroll_layer_create(bounds);
+
+	text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = {10 * bounds.size.w, 
+	10 * bounds.size.h } });
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
 	text_layer_set_overflow_mode(text_layer, GTextOverflowModeWordWrap);
-/*
-	scroll_layer = scroll_layer_create(bounds);
-	scroll_layer_set_click_config_onto_window(scroll_layer, window);
-	scroll_layer_set_content_size(scroll_layer, GSize(bounds.size.w, bounds.size.h));
+	text_layer_set_background_color(text_layer, GColorBlue);
+	text_layer_set_text_color(text_layer, GColorWhite);	
+
+	// Add the TextLayer and ScrollLayer to the view heirachy
 	scroll_layer_add_child(scroll_layer, text_layer_get_layer(text_layer));
 	layer_add_child(window_layer, scroll_layer_get_layer(scroll_layer));
-*/
+
+	// Enable TextLayer text flow and paging with inset size 2px
+	text_layer_enable_screen_text_flow_and_paging(text_layer, 2);
+
+	// Enable ScrollLayer paging
+	scroll_layer_set_paging(scroll_layer, true);
+
+	scroll_layer_add_child(scroll_layer, text_layer_get_layer(text_layer));
+  layer_add_child(window_layer, scroll_layer_get_layer(scroll_layer));	
+
+	scroll_layer_set_click_config_onto_window(scroll_layer, window);
 }
 
 static void window_unload(Window *window) {
@@ -77,7 +90,7 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
+ // window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
