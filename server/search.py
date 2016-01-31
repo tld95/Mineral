@@ -50,9 +50,19 @@ def search(query):
                             except:
                                 try:
                                     x = driver.find_element_by_css_selector('.mod ._oDd')
-                                    results.append(x.get_attribute('value'));
+                                    results.append(x.text);
                                 except:
-                                    results.append("No result")
+									try: 
+										results.append(driver.find_element_by_class_name
+('_FOc').text)
+									except:
+										try:
+											results.append(driver.find_element_by_class_name
+('kno-rdesc').text)
+										except:
+											results.append("No result")
+									
+								
 
     ans = results[0];
     for i in range(1,len(results)):
